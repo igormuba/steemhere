@@ -56,3 +56,39 @@ api.me(function(err, res) {
           document.getElementById("picture").src = "https://steemitimages.com/u/"+res.user+"/avatar";
         }
 });
+
+function submitPost(){
+  var allTags = document.getElementById("tags").value;
+
+  allTags = allTags.split(" ");
+
+
+  var parentPermlink=allTags[0];
+  var author=document.getElementById("username").innerHTML;
+  console.log("username"+author);
+  var title=document.getElementById("title").value;
+  console.log("title"+title);
+  var permlink=title.replace(/ /g, "-");
+  console.log("permlink"+permlink);
+  var body=document.getElementById("content").value;
+  console.log("body"+body);
+
+
+  var tagsMetadata='{"tags":[';
+  for (var i = 0; i<allTags.length; i++){
+    tagsMetadata+='"'+allTags[i]+'"';
+    if (i+1<allTags.length){
+      tagsMetadata+=",";
+    }
+  }
+  tagsMetadata+="]}";
+  console.log("tagsmetadata"+tagsMetadata);
+  var jsonMetadata=JSON.parse(tagsMetadata);
+  console.log("jsonmetadata"+jsonMetadata);
+
+  api.comment("", parentPermlink, author, permlink, title, body, jsonMetadata, function (err, res) {
+  console.log(err, res)
+
+
+});
+}
