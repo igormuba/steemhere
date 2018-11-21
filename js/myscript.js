@@ -38,7 +38,7 @@ if (access_token!="" && access_token!=null){
 }
 
 var access_token_in_cookies = getCookie("access_token_cookies");
-console.log("fromcookies is" + access_token_in_cookies);
+
 
 
 
@@ -50,7 +50,7 @@ var api = sc2.Initialize({
 });
 
 api.me(function(err, res) {
-    console.log(err, res);
+
     if (!err) {
           document.getElementById("username").innerHTML = res.user;
           document.getElementById("picture").src = "https://steemitimages.com/u/"+res.user+"/avatar";
@@ -64,14 +64,16 @@ function submitPost(){
 
 
   var parentPermlink=allTags[0];
+
   var author=document.getElementById("username").innerHTML;
-  console.log("username"+author);
+
   var title=document.getElementById("title").value;
-  console.log("title"+title);
+
   var permlink=title.replace(/ /g, "-");
-  console.log("permlink"+permlink);
+  permlink = permlink.toLowerCase();
+
   var body=document.getElementById("content").value;
-  console.log("body"+body);
+
 
 
   var tagsMetadata='{"tags":[';
@@ -82,12 +84,23 @@ function submitPost(){
     }
   }
   tagsMetadata+="]}";
-  console.log("tagsmetadata"+tagsMetadata);
+
   var jsonMetadata=JSON.parse(tagsMetadata);
-  console.log("jsonmetadata"+jsonMetadata);
+
 
   api.comment("", parentPermlink, author, permlink, title, body, jsonMetadata, function (err, res) {
-  console.log(err, res)
+
+
+  steem.api.getDiscussionsByAuthorBeforeDate(author, permlink, '2019-05-01T00:00:00', 1, function(err, result) {
+  document.getElementById("retrievedPost").innerHTML = result["0"].body;
+  document.getElementById("retrievedTitle").innerHTML = result["0"].root_title;
+
+  document.getElementById("commentElement").innerHTML = `
+    Content <textarea id="commentContent"></textarea><br>
+    <input type="button" value="Post Comment!" onclick="submitComment()">
+  `;
+
+  });
 
 
 });
